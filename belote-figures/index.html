@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Figures de belote</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a control bar (quality, source, backdrop), then two columns — the twelve figures laid out by suit on the left,
+   the inspector of the selected figure (preview, base64, identity) on the right. One column on a phone. */
+:root {
+  color-scheme: light;
+  --bg: #edf0ec;
+  --surface: #ffffff;
+  --surface-2: #f4f6f3;
+  --ink: #15201b;
+  --muted: #56635d;
+  --line: #d2d9d3;
+  --line-strong: #a9b4ad;
+  --accent: #0c6a4d;
+  --accent-ink: #ffffff;
+  --accent-soft: #d9ede4;
+  --suit-red: #b0222a;
+  --notice-bg: #fff3d1;
+  --notice-ink: #5f4300;
+  --notice-line: #e2c46a;
+  --check-a: #ffffff;
+  --check-b: #dde3de;
+  --shadow: 0 1px 2px rgba(21, 32, 27, .06), 0 10px 28px rgba(21, 32, 27, .07);
+  /* sample backdrops for the figures: the same in both themes */
+  --felt: #17603f;
+  --night: #141a22;
+  --ivory: #f3ead6;
+  --wine: #7a1e25;
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1513; --surface: #171e1b; --surface-2: #1e2723; --ink: #e7ece9; --muted: #9aa7a0;
+    --line: #2b3631; --line-strong: #4a5851; --accent: #55c79d; --accent-ink: #05241a; --accent-soft: #173a2e;
+    --suit-red: #f07f7f; --notice-bg: #3a2f10; --notice-ink: #f4dc9a; --notice-line: #6f5a1c;
+    --check-a: #2b332f; --check-b: #1f2623;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 10px 28px rgba(0, 0, 0, .3);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1513; --surface: #171e1b; --surface-2: #1e2723; --ink: #e7ece9; --muted: #9aa7a0;
+  --line: #2b3631; --line-strong: #4a5851; --accent: #55c79d; --accent-ink: #05241a; --accent-soft: #173a2e;
+  --suit-red: #f07f7f; --notice-bg: #3a2f10; --notice-ink: #f4dc9a; --notice-line: #6f5a1c;
+  --check-a: #2b332f; --check-b: #1f2623;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 10px 28px rgba(0, 0, 0, .3);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+img { max-width: 100%; }
+button, input, textarea { font: inherit; color: inherit; }
+code, .mono { font-family: var(--font-mono); font-size: .9em; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.page {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  --stage-bg: conic-gradient(var(--check-a) 25%, var(--check-b) 0 50%, var(--check-a) 0 75%, var(--check-b) 0) 0 0 / 18px 18px;
+  --stage-custom: #2b4a7a;
+}
+.page[data-stage="feutre"] { --stage-bg: var(--felt); }
+.page[data-stage="nuit"] { --stage-bg: var(--night); }
+.page[data-stage="ivoire"] { --stage-bg: var(--ivory); }
+.page[data-stage="bordeaux"] { --stage-bg: var(--wine); }
+.page[data-stage="autre"] { --stage-bg: var(--stage-custom); }
+
+/* ---------- masthead ---------- */
+.masthead { display: flex; flex-direction: column; gap: 6px; }
+.masthead h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4.2vw, 44px);
+  line-height: 1.08; letter-spacing: -.01em; text-wrap: balance;
+}
+.masthead p { margin: 0; max-width: 68ch; color: var(--muted); }
+.pips { color: var(--ink); letter-spacing: .12em; }
+.pips .r { color: var(--suit-red); }
+
+/* ---------- controls ---------- */
+.controls {
+  display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-end;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px; box-shadow: var(--shadow);
+}
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.group { display: flex; flex-direction: column; gap: 6px; }
+.group > legend, .label {
+  padding: 0; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--muted);
+}
+.group > legend { margin-bottom: 6px; }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg label { position: relative; display: block; cursor: pointer; }
+.seg input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.seg span {
+  display: flex; flex-direction: column; gap: 1px; padding: 7px 12px; border: 1px solid var(--line-strong);
+  border-radius: 7px; background: var(--surface); line-height: 1.2; font-weight: 500; white-space: nowrap;
+}
+.seg small { font-family: var(--font-mono); font-size: 11px; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.seg input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.seg input:checked + span small { color: var(--accent-ink); opacity: .85; }
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.swatches { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.swatches label { position: relative; display: block; cursor: pointer; }
+.swatches input[type="radio"] { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.swatches .sw {
+  display: flex; align-items: center; gap: 7px; padding: 5px 10px 5px 5px; border: 1px solid var(--line-strong);
+  border-radius: 7px; background: var(--surface); font-weight: 500; white-space: nowrap;
+}
+.swatches .dot { width: 22px; height: 22px; border-radius: 5px; border: 1px solid var(--line-strong); flex: none; }
+.dot.damier { background: conic-gradient(var(--check-a) 25%, var(--check-b) 0 50%, var(--check-a) 0 75%, var(--check-b) 0) 0 0 / 11px 11px; }
+.dot.feutre { background: var(--felt); }
+.dot.nuit { background: var(--night); }
+.dot.ivoire { background: var(--ivory); }
+.dot.bordeaux { background: var(--wine); }
+.swatches input:checked + .sw { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: var(--accent-soft); }
+.swatches input:focus-visible + .sw { outline: 2px solid var(--accent); outline-offset: 2px; }
+.swatches input[type="color"] {
+  width: 34px; height: 34px; padding: 2px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); cursor: pointer;
+}
+
+/* ---------- notice (local file fallback) ---------- */
+.notice {
+  background: var(--notice-bg); color: var(--notice-ink); border: 1px solid var(--notice-line); border-radius: var(--radius);
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.notice p { margin: 0; max-width: 90ch; }
+.notice .row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+
+/* ---------- layout ---------- */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 28px; align-items: start; }
+.left { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 26px 28px; }
+.suit { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.suit h2 {
+  margin: 0; display: flex; align-items: baseline; gap: 8px; font-family: var(--font-display); font-weight: 400;
+  font-size: 22px; line-height: 1.2; border-bottom: 1px solid var(--line); padding-bottom: 6px;
+}
+.glyph { font-family: Georgia, "Times New Roman", serif; }
+.glyph.rouge { color: var(--suit-red); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.tile { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tile-pick {
+  display: flex; flex-direction: column; gap: 7px; width: 100%; padding: 5px; margin: 0; text-align: left; cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: 9px;
+}
+.tile-pick:hover { border-color: var(--line-strong); }
+.tile-pick[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.tile-pick:focus-visible, .btn:focus-visible, textarea:focus-visible, .check input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage {
+  display: block; aspect-ratio: 448 / 800; width: 100%; max-width: 100%; background: var(--stage-bg);
+  border: 1px solid var(--line); border-radius: 6px; overflow: hidden; position: relative;
+}
+.stage img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.tile-cap { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 8px; padding: 0 2px; }
+.tile-name { font-weight: 600; line-height: 1.25; }
+.tile-id { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 12px; cursor: pointer;
+  border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface); color: var(--ink);
+  font-weight: 500; line-height: 1.25; text-align: center;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.small { padding: 5px 9px; font-size: 13px; }
+.btn.done { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+.tile .btn { margin: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- inspector ---------- */
+.inspector {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px; display: flex; flex-direction: column; gap: 16px; min-width: 0;
+}
+.insp-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; }
+.insp-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.1; text-wrap: balance; }
+.insp-head .glyph { font-size: 26px; }
+.chip { font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line-strong); border-radius: 5px; padding: 1px 7px; color: var(--muted); }
+.stage.large { max-width: 380px; margin: 0 auto; }
+.stage.large.actual { aspect-ratio: auto; max-width: 100%; height: 560px; overflow: auto; }
+.stage.large.actual img { width: auto; height: auto; max-width: none; object-fit: none; }
+.stage .empty {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; text-align: center;
+  background: var(--surface-2); color: var(--muted);
+}
+.under { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; }
+.origin { margin: 0; color: var(--muted); font-size: 13px; min-width: 0; overflow-wrap: anywhere; }
+.block { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.block-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.block-head .meta { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+textarea#b64-text {
+  width: 100%; min-height: 150px; resize: vertical; padding: 10px; border: 1px solid var(--line-strong); border-radius: 7px;
+  background: var(--surface-2); font-family: var(--font-mono); font-size: 12px; line-height: 1.45; word-break: break-all;
+}
+.checks { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.check { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.scroll-x { overflow-x: auto; }
+table.qual { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.qual th, table.qual td { padding: 7px 8px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.qual th { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+table.qual td.num, table.qual th.num { text-align: right; font-family: var(--font-mono); font-size: 13px; }
+table.qual th.num { font-family: var(--font-body); font-size: 11px; }
+table.qual tr.on td { background: var(--accent-soft); }
+table.qual tr.on td:first-child { font-weight: 600; }
+table.qual td:last-child { text-align: right; padding-right: 0; }
+dl.ident { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 16px; }
+dl.ident dt { color: var(--muted); }
+dl.ident dd { margin: 0; overflow-wrap: anywhere; }
+
+/* ---------- usage ---------- */
+.usage { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.usage h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 22px; }
+.usage p { margin: 0; max-width: 68ch; color: var(--muted); }
+pre {
+  margin: 0; padding: 12px 14px; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 7px;
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55;
+}
+
+@media (min-width: 981px) {
+  .page { padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); }
+  .controls { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+}
+@media (max-width: 980px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .left { display: contents; }
+  .gallery { order: 0; display: flex; overflow-x: auto; gap: 18px; padding-bottom: 8px; scroll-snap-type: x proximity; }
+  .suit { flex: none; width: 300px; scroll-snap-align: start; }
+  .inspector { order: 1; }
+  .usage { order: 2; }
+  .stage.large { max-width: 300px; }
+  .stage.large.actual { height: 420px; }
+}
+@media (max-width: 520px) {
+  .suit { width: 264px; }
+  .hide-narrow { display: none; }
+  table.qual th, table.qual td { padding: 7px 5px; }
+  .seg span { padding: 6px 9px; }
+  .inspector { padding: 14px; }
+  .insp-head h2 { font-size: 26px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .tile-pick, .seg span, .swatches .sw { transition: background-color .12s, border-color .12s, color .12s; }
+}
+</style>
+</head>
+<body>
+<div class="page" id="page" data-stage="damier">
+
+  <header class="masthead">
+    <h1>Figures de belote</h1>
+    <p>Valet, dame et roi des quatre couleurs <span class="pips glyph" aria-hidden="true">♠&#xFE0E;<span class="r">♥&#xFE0E;♦&#xFE0E;</span>♣&#xFE0E;</span> : douze figures détourées, sans cadre, sans indice ni enseigne, sur fond transparent. Chaque figure existe en PNG et en base64, en quatre qualités. Le bouton Copier placé sous une figure copie son base64 dans la qualité choisie.</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="Réglages d'affichage">
+    <fieldset class="group">
+      <legend>Qualité</legend>
+      <div class="seg" id="quality-group"></div>
+    </fieldset>
+    <fieldset class="group">
+      <legend>Source de l'aperçu</legend>
+      <div class="seg">
+        <label><input type="radio" name="source" id="source-png" value="png" checked><span>Fichier PNG<small>dossier png/</small></span></label>
+        <label><input type="radio" name="source" id="source-b64" value="b64"><span>Base64<small>lu dans le JSON</small></span></label>
+      </div>
+    </fieldset>
+    <fieldset class="group">
+      <legend>Fond d'essai</legend>
+      <div class="swatches">
+        <label><input type="radio" name="stage" id="stage-damier" value="damier" checked><span class="sw"><span class="dot damier"></span>Damier</span></label>
+        <label><input type="radio" name="stage" id="stage-feutre" value="feutre"><span class="sw"><span class="dot feutre"></span>Feutre</span></label>
+        <label><input type="radio" name="stage" id="stage-nuit" value="nuit"><span class="sw"><span class="dot nuit"></span>Nuit</span></label>
+        <label><input type="radio" name="stage" id="stage-ivoire" value="ivoire"><span class="sw"><span class="dot ivoire"></span>Ivoire</span></label>
+        <label><input type="radio" name="stage" id="stage-bordeaux" value="bordeaux"><span class="sw"><span class="dot bordeaux"></span>Bordeaux</span></label>
+        <label><input type="radio" name="stage" id="stage-autre" value="autre"><span class="sw"><span class="dot" id="autre-dot"></span>Autre</span></label>
+        <input type="color" id="stage-color" value="#2b4a7a" aria-label="Couleur du fond « Autre »">
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="notice" id="notice" hidden>
+    <p><strong>Les JSON ne sont pas encore chargés.</strong> Ouverte directement depuis le disque (adresse <code>file://</code>), une page n'a pas le droit de lire les fichiers voisins : les PNG s'affichent, mais le base64 reste dans les JSON. Chargez-les ici, ou servez le dossier avec <code>python3 -m http.server</code> puis ouvrez <code>http://localhost:8000/</code>.</p>
+    <div class="row">
+      <label class="btn primary" for="json-files">Charger les fichiers du dossier json/</label>
+      <input class="sr-only" type="file" id="json-files" multiple accept=".json,application/json">
+      <span id="notice-count"></span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="left">
+      <section class="gallery" id="gallery" aria-label="Les douze figures"></section>
+
+      <section class="usage" aria-labelledby="usage-title">
+        <h2 id="usage-title">Dans le code</h2>
+        <p>Un fichier JSON par figure, dans <code>json/</code>. Il porte l'identité de la carte et, pour chaque qualité, les dimensions, le poids et le PNG encodé en base64. <code>json/index.json</code> liste les douze figures sans le base64.</p>
+<pre><code>const carte = await (await fetch("json/roi-pique.json")).json();
+
+carte.id                      // "KS"
+carte.name                    // "Roi de Pique"
+carte.qualities.high.width    // 672
+carte.qualities.high.base64   // "iVBORw0KGgo…"
+
+img.src = carte.data_uri_prefix + carte.qualities.high.base64;</code></pre>
+      </section>
+    </div>
+
+    <aside class="inspector" id="inspector" aria-label="Figure sélectionnée">
+      <div class="insp-head">
+        <h2 id="insp-name"></h2>
+        <span class="glyph" id="insp-glyph" aria-hidden="true"></span>
+        <span class="chip" id="insp-id"></span>
+      </div>
+
+      <div class="stage large" id="insp-stage">
+        <img id="insp-img" alt="" decoding="async">
+        <div class="empty" id="insp-empty" hidden></div>
+      </div>
+
+      <div class="under">
+        <p class="origin" id="insp-origin"></p>
+        <div class="seg" role="group" aria-label="Taille de l'aperçu">
+          <label><input type="radio" name="zoom" id="zoom-fit" value="fit" checked><span>Ajuster</span></label>
+          <label><input type="radio" name="zoom" id="zoom-actual" value="actual"><span>Taille réelle</span></label>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-head">
+          <span class="label" id="b64-label">Base64</span>
+          <span class="meta" id="b64-meta"></span>
+        </div>
+        <textarea id="b64-text" readonly spellcheck="false" aria-labelledby="b64-label"></textarea>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="opt-prefix">Avec le préfixe <code>data:image/png;base64,</code></label>
+          <label class="check"><input type="checkbox" id="opt-full">Afficher toute la chaîne</label>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn primary" id="copy-b64" data-kind="b64">Copier le base64</button>
+          <button type="button" class="btn" id="copy-uri" data-kind="uri">Copier la data URI</button>
+          <button type="button" class="btn" id="copy-img" data-kind="img">Copier la balise &lt;img&gt;</button>
+          <button type="button" class="btn" id="copy-json" data-kind="json">Copier le JSON</button>
+        </div>
+      </div>
+
+      <div class="block">
+        <span class="label">Les quatre qualités</span>
+        <div class="scroll-x">
+          <table class="qual">
+            <thead><tr><th>Qualité</th><th class="num">Pixels</th><th class="num">PNG</th><th class="num hide-narrow">Base64</th><th><span class="sr-only">Copier</span></th></tr></thead>
+            <tbody id="qual-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <span class="label">Identité</span>
+        <dl class="ident" id="ident"></dl>
+      </div>
+    </aside>
+  </div>
+
+  <p class="sr-only" role="status" id="status"></p>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var DATA = {"count":12,"quality_order":["extra_high","high","medium","low"],"cards":[{"id":"JS","slug":"valet-pique","name":"Valet de Pique","name_en":"Jack of Spades","rank":{"code":"J","name":"Valet","name_en":"Jack"},"suit":{"code":"S","name":"Pique","name_en":"Spades","symbol":"♠","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-JS","width":448,"height":800},"json":"json/valet-pique.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1878456,"file":"png/extra_high/valet-pique.png","content_box":{"x":34,"y":40,"width":783,"height":1450},"base64_length":2504608},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1139993,"file":"png/high/valet-pique.png","content_box":{"x":25,"y":30,"width":588,"height":1088},"base64_length":1519992},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":547839,"file":"png/medium/valet-pique.png","content_box":{"x":16,"y":20,"width":393,"height":726},"base64_length":730452},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":150139,"file":"png/low/valet-pique.png","content_box":{"x":8,"y":10,"width":197,"height":363},"base64_length":200188}}},{"id":"QS","slug":"dame-pique","name":"Dame de Pique","name_en":"Queen of Spades","rank":{"code":"Q","name":"Dame","name_en":"Queen"},"suit":{"code":"S","name":"Pique","name_en":"Spades","symbol":"♠","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-QS","width":448,"height":800},"json":"json/dame-pique.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1875239,"file":"png/extra_high/dame-pique.png","content_box":{"x":76,"y":45,"width":743,"height":1433},"base64_length":2500320},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1123622,"file":"png/high/dame-pique.png","content_box":{"x":56,"y":33,"width":559,"height":1076},"base64_length":1498164},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":530024,"file":"png/medium/dame-pique.png","content_box":{"x":37,"y":22,"width":373,"height":718},"base64_length":706700},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":140328,"file":"png/low/dame-pique.png","content_box":{"x":18,"y":11,"width":187,"height":359},"base64_length":187104}}},{"id":"KS","slug":"roi-pique","name":"Roi de Pique","name_en":"King of Spades","rank":{"code":"K","name":"Roi","name_en":"King"},"suit":{"code":"S","name":"Pique","name_en":"Spades","symbol":"♠","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-KS","width":448,"height":800},"json":"json/roi-pique.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1966698,"file":"png/extra_high/roi-pique.png","content_box":{"x":74,"y":65,"width":747,"height":1488},"base64_length":2622264},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1193202,"file":"png/high/roi-pique.png","content_box":{"x":55,"y":49,"width":561,"height":1116},"base64_length":1590936},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":569179,"file":"png/medium/roi-pique.png","content_box":{"x":36,"y":32,"width":375,"height":745},"base64_length":758908},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":153561,"file":"png/low/roi-pique.png","content_box":{"x":18,"y":16,"width":188,"height":372},"base64_length":204748}}},{"id":"JH","slug":"valet-coeur","name":"Valet de Cœur","name_en":"Jack of Hearts","rank":{"code":"J","name":"Valet","name_en":"Jack"},"suit":{"code":"H","name":"Cœur","name_en":"Hearts","symbol":"♥","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-JH","width":448,"height":800},"json":"json/valet-coeur.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1670145,"file":"png/extra_high/valet-coeur.png","content_box":{"x":74,"y":28,"width":747,"height":1460},"base64_length":2226860},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1016062,"file":"png/high/valet-coeur.png","content_box":{"x":55,"y":21,"width":561,"height":1096},"base64_length":1354752},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":494432,"file":"png/medium/valet-coeur.png","content_box":{"x":36,"y":14,"width":375,"height":731},"base64_length":659244},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":139099,"file":"png/low/valet-coeur.png","content_box":{"x":18,"y":7,"width":188,"height":366},"base64_length":185468}}},{"id":"QH","slug":"dame-coeur","name":"Dame de Cœur","name_en":"Queen of Hearts","rank":{"code":"Q","name":"Dame","name_en":"Queen"},"suit":{"code":"H","name":"Cœur","name_en":"Hearts","symbol":"♥","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-QH","width":448,"height":800},"json":"json/dame-coeur.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1944449,"file":"png/extra_high/dame-coeur.png","content_box":{"x":72,"y":49,"width":749,"height":1429},"base64_length":2592600},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1173724,"file":"png/high/dame-coeur.png","content_box":{"x":53,"y":36,"width":563,"height":1073},"base64_length":1564968},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":561453,"file":"png/medium/dame-coeur.png","content_box":{"x":35,"y":24,"width":376,"height":716},"base64_length":748604},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":150830,"file":"png/low/dame-coeur.png","content_box":{"x":17,"y":12,"width":189,"height":358},"base64_length":201108}}},{"id":"KH","slug":"roi-coeur","name":"Roi de Cœur","name_en":"King of Hearts","rank":{"code":"K","name":"Roi","name_en":"King"},"suit":{"code":"H","name":"Cœur","name_en":"Hearts","symbol":"♥","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-KH","width":448,"height":800},"json":"json/roi-coeur.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1837718,"file":"png/extra_high/roi-coeur.png","content_box":{"x":72,"y":59,"width":784,"height":1505},"base64_length":2450292},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1114640,"file":"png/high/roi-coeur.png","content_box":{"x":53,"y":44,"width":589,"height":1129},"base64_length":1486188},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":537671,"file":"png/medium/roi-coeur.png","content_box":{"x":35,"y":29,"width":393,"height":753},"base64_length":716896},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":147823,"file":"png/low/roi-coeur.png","content_box":{"x":17,"y":14,"width":197,"height":377},"base64_length":197100}}},{"id":"JD","slug":"valet-carreau","name":"Valet de Carreau","name_en":"Jack of Diamonds","rank":{"code":"J","name":"Valet","name_en":"Jack"},"suit":{"code":"D","name":"Carreau","name_en":"Diamonds","symbol":"♦","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-JD","width":448,"height":800},"json":"json/valet-carreau.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1635464,"file":"png/extra_high/valet-carreau.png","content_box":{"x":82,"y":33,"width":739,"height":1453},"base64_length":2180620},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":991996,"file":"png/high/valet-carreau.png","content_box":{"x":61,"y":24,"width":555,"height":1091},"base64_length":1322664},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":481637,"file":"png/medium/valet-carreau.png","content_box":{"x":40,"y":16,"width":371,"height":728},"base64_length":642184},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":138044,"file":"png/low/valet-carreau.png","content_box":{"x":20,"y":8,"width":186,"height":364},"base64_length":184060}}},{"id":"QD","slug":"dame-carreau","name":"Dame de Carreau","name_en":"Queen of Diamonds","rank":{"code":"Q","name":"Dame","name_en":"Queen"},"suit":{"code":"D","name":"Carreau","name_en":"Diamonds","symbol":"♦","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-QD","width":448,"height":800},"json":"json/dame-carreau.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1975083,"file":"png/extra_high/dame-carreau.png","content_box":{"x":82,"y":39,"width":741,"height":1437},"base64_length":2633444},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1192475,"file":"png/high/dame-carreau.png","content_box":{"x":61,"y":29,"width":557,"height":1079},"base64_length":1589968},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":568154,"file":"png/medium/dame-carreau.png","content_box":{"x":40,"y":19,"width":372,"height":720},"base64_length":757540},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":152508,"file":"png/low/dame-carreau.png","content_box":{"x":20,"y":9,"width":186,"height":361},"base64_length":203344}}},{"id":"KD","slug":"roi-carreau","name":"Roi de Carreau","name_en":"King of Diamonds","rank":{"code":"K","name":"Roi","name_en":"King"},"suit":{"code":"D","name":"Carreau","name_en":"Diamonds","symbol":"♦","color":"rouge"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-KD","width":448,"height":800},"json":"json/roi-carreau.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1811565,"file":"png/extra_high/roi-carreau.png","content_box":{"x":82,"y":92,"width":741,"height":1469},"base64_length":2415420},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1101195,"file":"png/high/roi-carreau.png","content_box":{"x":61,"y":69,"width":557,"height":1102},"base64_length":1468260},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":531737,"file":"png/medium/roi-carreau.png","content_box":{"x":40,"y":46,"width":372,"height":735},"base64_length":708984},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":147432,"file":"png/low/roi-carreau.png","content_box":{"x":20,"y":23,"width":186,"height":368},"base64_length":196576}}},{"id":"JC","slug":"valet-trefle","name":"Valet de Trèfle","name_en":"Jack of Clubs","rank":{"code":"J","name":"Valet","name_en":"Jack"},"suit":{"code":"C","name":"Trèfle","name_en":"Clubs","symbol":"♣","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-JC","width":448,"height":800},"json":"json/valet-trefle.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1535131,"file":"png/extra_high/valet-trefle.png","content_box":{"x":86,"y":23,"width":735,"height":1463},"base64_length":2046844},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":926688,"file":"png/high/valet-trefle.png","content_box":{"x":65,"y":17,"width":551,"height":1098},"base64_length":1235584},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":447325,"file":"png/medium/valet-trefle.png","content_box":{"x":43,"y":11,"width":368,"height":733},"base64_length":596436},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":124719,"file":"png/low/valet-trefle.png","content_box":{"x":21,"y":6,"width":185,"height":366},"base64_length":166292}}},{"id":"QC","slug":"dame-trefle","name":"Dame de Trèfle","name_en":"Queen of Clubs","rank":{"code":"Q","name":"Dame","name_en":"Queen"},"suit":{"code":"C","name":"Trèfle","name_en":"Clubs","symbol":"♣","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-QC","width":448,"height":800},"json":"json/dame-trefle.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1954584,"file":"png/extra_high/dame-trefle.png","content_box":{"x":78,"y":50,"width":745,"height":1430},"base64_length":2606112},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1184308,"file":"png/high/dame-trefle.png","content_box":{"x":58,"y":37,"width":560,"height":1074},"base64_length":1579080},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":564861,"file":"png/medium/dame-trefle.png","content_box":{"x":38,"y":24,"width":374,"height":717},"base64_length":753148},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":152184,"file":"png/low/dame-trefle.png","content_box":{"x":19,"y":12,"width":187,"height":359},"base64_length":202912}}},{"id":"KC","slug":"roi-trefle","name":"Roi de Trèfle","name_en":"King of Clubs","rank":{"code":"K","name":"Roi","name_en":"King"},"suit":{"code":"C","name":"Trèfle","name_en":"Clubs","symbol":"♣","color":"noir"},"mime":"image/png","background":"transparent","data_uri_prefix":"data:image/png;base64,","source":{"svg_element":"card-KC","width":448,"height":800},"json":"json/roi-trefle.json","qualities":{"extra_high":{"label":"Extra haute","scale":2.0,"width":896,"height":1600,"bytes":1769399,"file":"png/extra_high/roi-trefle.png","content_box":{"x":78,"y":66,"width":745,"height":1491},"base64_length":2359200},"high":{"label":"Haute","scale":1.5,"width":672,"height":1200,"bytes":1076388,"file":"png/high/roi-trefle.png","content_box":{"x":58,"y":50,"width":560,"height":1117},"base64_length":1435184},"medium":{"label":"Moyenne","scale":1.0,"width":448,"height":800,"bytes":518278,"file":"png/medium/roi-trefle.png","content_box":{"x":38,"y":33,"width":374,"height":745},"base64_length":691040},"low":{"label":"Basse","scale":0.5,"width":224,"height":400,"bytes":141312,"file":"png/low/roi-trefle.png","content_box":{"x":19,"y":16,"width":187,"height":373},"base64_length":188416}}}]};
+  var QUALS = DATA.quality_order;
+  var CARDS = DATA.cards;
+  var byId = {};
+  CARDS.forEach(function (c) { byId[c.id] = c; });
+  var SUIT_ORDER = ["S", "H", "D", "C"];
+  var IS_FILE = location.protocol === "file:";
+
+  var state = { id: CARDS[0].id, quality: "high", source: "png", stage: "damier", color: "#2b4a7a", zoom: "fit", prefix: false, full: false };
+  try {
+    var saved = JSON.parse(localStorage.getItem("belote-figures") || "{}");
+    if (byId[saved.id]) state.id = saved.id;
+    if (QUALS.indexOf(saved.quality) >= 0) state.quality = saved.quality;
+    if (["damier", "feutre", "nuit", "ivoire", "bordeaux", "autre"].indexOf(saved.stage) >= 0) state.stage = saved.stage;
+    if (/^#[0-9a-f]{6}$/i.test(saved.color || "")) state.color = saved.color;
+  } catch (e) {}
+  function remember() {
+    try { localStorage.setItem("belote-figures", JSON.stringify({ id: state.id, quality: state.quality, stage: state.stage, color: state.color })); } catch (e) {}
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var page = $("page");
+  var nf = new Intl.NumberFormat("fr-FR");
+  function fmtBytes(n) {
+    if (n >= 1048576) return (n / 1048576).toFixed(2).replace(".", ",") + " Mo";
+    return Math.round(n / 1024) + " Ko";
+  }
+  function el(tag, attrs, children) {
+    var n = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      if (k === "text") n.textContent = attrs[k]; else if (k === "class") n.className = attrs[k]; else n.setAttribute(k, attrs[k]);
+    });
+    (children || []).forEach(function (c) { n.appendChild(c); });
+    return n;
+  }
+
+  /* ---------- card JSON loading ---------- */
+  var loaded = {};      // id -> parsed JSON of the card
+  var pending = {};     // id -> Promise
+  var failed = {};      // id -> true when the fetch failed
+  function ensureCard(id) {
+    if (loaded[id]) return Promise.resolve(loaded[id]);
+    if (pending[id]) return pending[id];
+    if (IS_FILE) { failed[id] = true; showNotice(); return Promise.reject(new Error("file")); }
+    pending[id] = fetch(byId[id].json).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (card) {
+      loaded[id] = card; delete pending[id]; delete failed[id];
+      if (id === state.id) renderInspector();
+      return card;
+    }, function (err) {
+      delete pending[id]; failed[id] = true; showNotice();
+      if (id === state.id) renderInspector();
+      throw err;
+    });
+    return pending[id];
+  }
+  function showNotice() {
+    $("notice").hidden = false;
+    var n = Object.keys(loaded).length;
+    $("notice-count").textContent = n ? n + " / " + CARDS.length + " figures chargées" : "";
+    if (n === CARDS.length) $("notice").hidden = true;
+  }
+  $("json-files").addEventListener("change", function (ev) {
+    var files = Array.prototype.slice.call(ev.target.files || []);
+    Promise.all(files.map(function (f) {
+      return f.text().then(function (t) {
+        try {
+          var card = JSON.parse(t);
+          if (card && byId[card.id] && card.qualities && card.qualities[QUALS[0]].base64) { loaded[card.id] = card; delete failed[card.id]; }
+        } catch (e) {}
+      });
+    })).then(function () { showNotice(); renderInspector(); say(Object.keys(loaded).length + " figures chargées"); });
+  });
+
+  /* ---------- text builders + clipboard ---------- */
+  function buildText(card, q, kind) {
+    var info = card.qualities[q];
+    if (kind === "b64") return info.base64;
+    if (kind === "uri") return card.data_uri_prefix + info.base64;
+    if (kind === "img") return '<img src="' + card.data_uri_prefix + info.base64 + '" alt="' + card.name + '" width="' + info.width + '" height="' + info.height + '">';
+    return JSON.stringify(card, null, 2);
+  }
+  function writeClipboard(text) {
+    function legacy() {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand("copy"); ta.remove(); return ok;
+      } catch (e) { return false; }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(function () { return true; }, legacy);
+    }
+    return Promise.resolve(legacy());
+  }
+  function say(msg) { $("status").textContent = msg; }
+  function flash(btn, msg, good) {
+    if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+    btn.textContent = msg; btn.classList.toggle("done", !!good);
+    clearTimeout(btn._t);
+    btn._t = setTimeout(function () { btn.textContent = btn.dataset.label; btn.classList.remove("done"); }, 2200);
+    say(msg);
+  }
+  var KIND_NAME = { b64: "Base64", uri: "Data URI", img: "Balise", json: "JSON" };
+  function doCopy(id, q, kind, btn, brief) {
+    var had = !!loaded[id];
+    if (!had) flash(btn, brief ? "Lecture…" : "Lecture du JSON…");
+    ensureCard(id).then(function (card) {
+      var text = buildText(card, q, kind);
+      return writeClipboard(text).then(function (ok) {
+        if (ok) { flash(btn, brief ? "Copié" : "Copié : " + (kind === "json" ? "JSON" : byId[id].qualities[q].label.toLowerCase()), true); return; }
+        if (!had) { flash(btn, brief ? "Recliquez" : "Prêt, recliquez pour copier"); return; }
+        if (id === state.id) {                       // last resort: select the text for a manual copy
+          state.full = true; $("opt-full").checked = true; state.prefix = kind !== "b64" && kind !== "json";
+          $("opt-prefix").checked = state.prefix; renderB64(); $("b64-text").focus(); $("b64-text").select();
+        }
+        flash(btn, brief ? "Refusée" : "Copie refusée : sélectionnez puis Ctrl+C");
+      });
+    }, function () { flash(btn, brief ? "Non chargé" : "JSON non chargé"); });
+  }
+
+  /* ---------- gallery ---------- */
+  function renderGallery() {
+    var g = $("gallery");
+    SUIT_ORDER.forEach(function (s) {
+      var cards = CARDS.filter(function (c) { return c.suit.code === s; });
+      var suit = cards[0].suit;
+      var tiles = el("div", { class: "tiles" });
+      cards.forEach(function (c) {
+        var img = el("img", { src: c.qualities.medium.file, alt: "", loading: "lazy", decoding: "async", width: c.qualities.medium.width, height: c.qualities.medium.height });
+        var pick = el("button", { type: "button", class: "tile-pick", "data-id": c.id, "aria-pressed": "false", "aria-label": c.name + ", afficher dans l'inspecteur" }, [
+          el("span", { class: "stage" }, [img]),
+          el("span", { class: "tile-cap" }, [el("span", { class: "tile-name", text: c.rank.name }), el("span", { class: "tile-id", text: c.id })])
+        ]);
+        var copy = el("button", { type: "button", class: "btn small", "data-copy-id": c.id, "aria-label": "Copier le base64 de " + c.name, text: "Copier" });
+        var tile = el("div", { class: "tile" }, [pick, copy]);
+        if (!IS_FILE) {
+          tile.addEventListener("pointerenter", function () { ensureCard(c.id).catch(function () {}); });
+          tile.addEventListener("focusin", function () { ensureCard(c.id).catch(function () {}); });
+        }
+        tiles.appendChild(tile);
+      });
+      g.appendChild(el("div", { class: "suit" }, [
+        el("h2", {}, [el("span", { class: "glyph " + suit.color, "aria-hidden": "true", text: suit.symbol + "\uFE0E" }), document.createTextNode(suit.name)]),
+        tiles
+      ]));
+    });
+    g.addEventListener("click", function (ev) {
+      var pick = ev.target.closest(".tile-pick");
+      if (pick) { select(pick.dataset.id); return; }
+      var copy = ev.target.closest("[data-copy-id]");
+      if (copy) doCopy(copy.dataset.copyId, state.quality, "b64", copy, true);
+    });
+  }
+  function select(id) {
+    state.id = id; state.full = false; $("opt-full").checked = false;
+    remember(); renderSelection(); renderInspector();
+    if (!IS_FILE) ensureCard(id).catch(function () {});
+  }
+  function renderSelection() {
+    Array.prototype.forEach.call(document.querySelectorAll(".tile-pick"), function (b) {
+      b.setAttribute("aria-pressed", b.dataset.id === state.id ? "true" : "false");
+    });
+  }
+
+  /* ---------- inspector ---------- */
+  function renderB64() {
+    var card = loaded[state.id], info = byId[state.id].qualities[state.quality], ta = $("b64-text");
+    $("b64-label").textContent = "Base64 · " + info.label.toLowerCase();
+    if (!card) {
+      ta.value = ""; ta.placeholder = failed[state.id] ? "JSON non chargé : voir le message en haut de page." : "Lecture de " + byId[state.id].json + "…";
+      $("b64-meta").textContent = nf.format(info.base64_length) + " caractères";
+      return;
+    }
+    var s = (state.prefix ? card.data_uri_prefix : "") + card.qualities[state.quality].base64;
+    var cut = !state.full && s.length > 2600;
+    ta.value = cut ? s.slice(0, 2000) + "\n…\n" + s.slice(-240) : s;
+    $("b64-meta").textContent = nf.format(s.length) + " caractères" + (cut ? " · début et fin affichés" : "");
+  }
+  function renderInspector() {
+    var c = byId[state.id], info = c.qualities[state.quality], card = loaded[state.id];
+    $("insp-name").textContent = c.name;
+    $("insp-id").textContent = c.id;
+    var glyph = $("insp-glyph"); glyph.textContent = c.suit.symbol + "\uFE0E"; glyph.className = "glyph " + c.suit.color;
+
+    var img = $("insp-img"), empty = $("insp-empty"), src = null;
+    if (state.source === "png") {
+      src = info.file;
+      $("insp-origin").innerHTML = "Affiché depuis <code></code>";
+      $("insp-origin").querySelector("code").textContent = info.file;
+    } else {
+      if (card) src = card.data_uri_prefix + card.qualities[state.quality].base64;
+      $("insp-origin").innerHTML = "Affiché depuis le base64 de <code></code>";
+      $("insp-origin").querySelector("code").textContent = c.json + " → qualities." + state.quality + ".base64";
+    }
+    if (src) {
+      if (img.dataset.key !== state.id + state.quality + state.source) { img.src = src; img.dataset.key = state.id + state.quality + state.source; }
+      img.alt = c.name + ", " + info.label.toLowerCase() + ", " + info.width + " × " + info.height + " pixels";
+      img.hidden = false; empty.hidden = true;
+    } else {
+      img.hidden = true; img.removeAttribute("src"); img.dataset.key = ""; empty.hidden = false;
+      empty.textContent = failed[state.id] ? "Base64 indisponible tant que le JSON n'est pas chargé." : "Lecture du JSON…";
+    }
+    $("insp-stage").classList.toggle("actual", state.zoom === "actual");
+
+    renderB64();
+
+    var rows = $("qual-rows"); rows.textContent = "";
+    QUALS.forEach(function (q) {
+      var i = c.qualities[q];
+      var btn = el("button", { type: "button", class: "btn small", "data-q": q, "aria-label": "Copier le base64, qualité " + i.label.toLowerCase(), text: "Copier" });
+      rows.appendChild(el("tr", { class: q === state.quality ? "on" : "" }, [
+        el("td", { text: i.label }), el("td", { class: "num", text: i.width + " × " + i.height }),
+        el("td", { class: "num", text: fmtBytes(i.bytes) }), el("td", { class: "num hide-narrow", text: fmtBytes(i.base64_length) }), el("td", {}, [btn])
+      ]));
+    });
+
+    var ident = $("ident"); ident.textContent = "";
+    [["Identifiant", c.id, true], ["Nom", c.name + " (" + c.name_en + ")"], ["Rang", c.rank.name + " · " + c.rank.code], ["Couleur", c.suit.name + " " + c.suit.symbol + "\uFE0E · " + c.suit.code],
+     ["Fichier JSON", c.json, true], ["Fichier PNG", info.file, true]].forEach(function (r) {
+      ident.appendChild(el("dt", { text: r[0] }));
+      ident.appendChild(el("dd", r[2] ? { class: "mono", text: r[1] } : { text: r[1] }));
+    });
+  }
+
+  /* ---------- controls ---------- */
+  QUALS.forEach(function (q) {
+    var i = CARDS[0].qualities[q];
+    var input = el("input", { type: "radio", name: "quality", id: "quality-" + q, value: q });
+    var span = el("span", {}, [document.createTextNode(i.label), el("small", { text: i.width + " × " + i.height })]);
+    $("quality-group").appendChild(el("label", {}, [input, span]));
+  });
+  function applyStage() {
+    page.dataset.stage = state.stage;
+    page.style.setProperty("--stage-custom", state.color);
+    $("autre-dot").style.background = state.color;
+  }
+  document.addEventListener("change", function (ev) {
+    var t = ev.target;
+    if (t.name === "quality") { state.quality = t.value; state.full = false; $("opt-full").checked = false; remember(); renderInspector(); }
+    else if (t.name === "source") { state.source = t.value; renderInspector(); if (t.value === "b64") ensureCard(state.id).catch(function () {}); }
+    else if (t.name === "stage") { state.stage = t.value; remember(); applyStage(); }
+    else if (t.name === "zoom") { state.zoom = t.value; renderInspector(); }
+    else if (t.id === "opt-prefix") { state.prefix = t.checked; renderB64(); }
+    else if (t.id === "opt-full") { state.full = t.checked; renderB64(); }
+  });
+  $("stage-color").addEventListener("input", function (ev) {
+    state.color = ev.target.value; state.stage = "autre"; $("stage-autre").checked = true; remember(); applyStage();
+  });
+  $("inspector").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button");
+    if (!b) return;
+    if (b.dataset.kind) doCopy(state.id, state.quality, b.dataset.kind, b);
+    else if (b.dataset.q) doCopy(state.id, b.dataset.q, "b64", b);
+  });
+
+  /* ---------- start ---------- */
+  renderGallery();
+  $("quality-" + state.quality).checked = true;
+  $("stage-" + state.stage).checked = true;
+  $("stage-color").value = state.color;
+  applyStage();
+  renderSelection();
+  renderInspector();
+  if (IS_FILE) { failed[state.id] = true; showNotice(); renderInspector(); }
+  else ensureCard(state.id).catch(function () {});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1079 @@
+{
+  "count": 12,
+  "quality_order": [
+    "extra_high",
+    "high",
+    "medium",
+    "low"
+  ],
+  "cards": [
+    {
+      "id": "JS",
+      "slug": "valet-pique",
+      "name": "Valet de Pique",
+      "name_en": "Jack of Spades",
+      "rank": {
+        "code": "J",
+        "name": "Valet",
+        "name_en": "Jack"
+      },
+      "suit": {
+        "code": "S",
+        "name": "Pique",
+        "name_en": "Spades",
+        "symbol": "♠",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-JS",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/valet-pique.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1878456,
+          "file": "png/extra_high/valet-pique.png",
+          "content_box": {
+            "x": 34,
+            "y": 40,
+            "width": 783,
+            "height": 1450
+          },
+          "base64_length": 2504608
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1139993,
+          "file": "png/high/valet-pique.png",
+          "content_box": {
+            "x": 25,
+            "y": 30,
+            "width": 588,
+            "height": 1088
+          },
+          "base64_length": 1519992
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 547839,
+          "file": "png/medium/valet-pique.png",
+          "content_box": {
+            "x": 16,
+            "y": 20,
+            "width": 393,
+            "height": 726
+          },
+          "base64_length": 730452
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 150139,
+          "file": "png/low/valet-pique.png",
+          "content_box": {
+            "x": 8,
+            "y": 10,
+            "width": 197,
+            "height": 363
+          },
+          "base64_length": 200188
+        }
+      }
+    },
+    {
+      "id": "QS",
+      "slug": "dame-pique",
+      "name": "Dame de Pique",
+      "name_en": "Queen of Spades",
+      "rank": {
+        "code": "Q",
+        "name": "Dame",
+        "name_en": "Queen"
+      },
+      "suit": {
+        "code": "S",
+        "name": "Pique",
+        "name_en": "Spades",
+        "symbol": "♠",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-QS",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/dame-pique.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1875239,
+          "file": "png/extra_high/dame-pique.png",
+          "content_box": {
+            "x": 76,
+            "y": 45,
+            "width": 743,
+            "height": 1433
+          },
+          "base64_length": 2500320
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1123622,
+          "file": "png/high/dame-pique.png",
+          "content_box": {
+            "x": 56,
+            "y": 33,
+            "width": 559,
+            "height": 1076
+          },
+          "base64_length": 1498164
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 530024,
+          "file": "png/medium/dame-pique.png",
+          "content_box": {
+            "x": 37,
+            "y": 22,
+            "width": 373,
+            "height": 718
+          },
+          "base64_length": 706700
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 140328,
+          "file": "png/low/dame-pique.png",
+          "content_box": {
+            "x": 18,
+            "y": 11,
+            "width": 187,
+            "height": 359
+          },
+          "base64_length": 187104
+        }
+      }
+    },
+    {
+      "id": "KS",
+      "slug": "roi-pique",
+      "name": "Roi de Pique",
+      "name_en": "King of Spades",
+      "rank": {
+        "code": "K",
+        "name": "Roi",
+        "name_en": "King"
+      },
+      "suit": {
+        "code": "S",
+        "name": "Pique",
+        "name_en": "Spades",
+        "symbol": "♠",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-KS",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/roi-pique.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1966698,
+          "file": "png/extra_high/roi-pique.png",
+          "content_box": {
+            "x": 74,
+            "y": 65,
+            "width": 747,
+            "height": 1488
+          },
+          "base64_length": 2622264
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1193202,
+          "file": "png/high/roi-pique.png",
+          "content_box": {
+            "x": 55,
+            "y": 49,
+            "width": 561,
+            "height": 1116
+          },
+          "base64_length": 1590936
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 569179,
+          "file": "png/medium/roi-pique.png",
+          "content_box": {
+            "x": 36,
+            "y": 32,
+            "width": 375,
+            "height": 745
+          },
+          "base64_length": 758908
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 153561,
+          "file": "png/low/roi-pique.png",
+          "content_box": {
+            "x": 18,
+            "y": 16,
+            "width": 188,
+            "height": 372
+          },
+          "base64_length": 204748
+        }
+      }
+    },
+    {
+      "id": "JH",
+      "slug": "valet-coeur",
+      "name": "Valet de Cœur",
+      "name_en": "Jack of Hearts",
+      "rank": {
+        "code": "J",
+        "name": "Valet",
+        "name_en": "Jack"
+      },
+      "suit": {
+        "code": "H",
+        "name": "Cœur",
+        "name_en": "Hearts",
+        "symbol": "♥",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-JH",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/valet-coeur.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1670145,
+          "file": "png/extra_high/valet-coeur.png",
+          "content_box": {
+            "x": 74,
+            "y": 28,
+            "width": 747,
+            "height": 1460
+          },
+          "base64_length": 2226860
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1016062,
+          "file": "png/high/valet-coeur.png",
+          "content_box": {
+            "x": 55,
+            "y": 21,
+            "width": 561,
+            "height": 1096
+          },
+          "base64_length": 1354752
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 494432,
+          "file": "png/medium/valet-coeur.png",
+          "content_box": {
+            "x": 36,
+            "y": 14,
+            "width": 375,
+            "height": 731
+          },
+          "base64_length": 659244
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 139099,
+          "file": "png/low/valet-coeur.png",
+          "content_box": {
+            "x": 18,
+            "y": 7,
+            "width": 188,
+            "height": 366
+          },
+          "base64_length": 185468
+        }
+      }
+    },
+    {
+      "id": "QH",
+      "slug": "dame-coeur",
+      "name": "Dame de Cœur",
+      "name_en": "Queen of Hearts",
+      "rank": {
+        "code": "Q",
+        "name": "Dame",
+        "name_en": "Queen"
+      },
+      "suit": {
+        "code": "H",
+        "name": "Cœur",
+        "name_en": "Hearts",
+        "symbol": "♥",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-QH",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/dame-coeur.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1944449,
+          "file": "png/extra_high/dame-coeur.png",
+          "content_box": {
+            "x": 72,
+            "y": 49,
+            "width": 749,
+            "height": 1429
+          },
+          "base64_length": 2592600
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1173724,
+          "file": "png/high/dame-coeur.png",
+          "content_box": {
+            "x": 53,
+            "y": 36,
+            "width": 563,
+            "height": 1073
+          },
+          "base64_length": 1564968
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 561453,
+          "file": "png/medium/dame-coeur.png",
+          "content_box": {
+            "x": 35,
+            "y": 24,
+            "width": 376,
+            "height": 716
+          },
+          "base64_length": 748604
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 150830,
+          "file": "png/low/dame-coeur.png",
+          "content_box": {
+            "x": 17,
+            "y": 12,
+            "width": 189,
+            "height": 358
+          },
+          "base64_length": 201108
+        }
+      }
+    },
+    {
+      "id": "KH",
+      "slug": "roi-coeur",
+      "name": "Roi de Cœur",
+      "name_en": "King of Hearts",
+      "rank": {
+        "code": "K",
+        "name": "Roi",
+        "name_en": "King"
+      },
+      "suit": {
+        "code": "H",
+        "name": "Cœur",
+        "name_en": "Hearts",
+        "symbol": "♥",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-KH",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/roi-coeur.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1837718,
+          "file": "png/extra_high/roi-coeur.png",
+          "content_box": {
+            "x": 72,
+            "y": 59,
+            "width": 784,
+            "height": 1505
+          },
+          "base64_length": 2450292
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1114640,
+          "file": "png/high/roi-coeur.png",
+          "content_box": {
+            "x": 53,
+            "y": 44,
+            "width": 589,
+            "height": 1129
+          },
+          "base64_length": 1486188
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 537671,
+          "file": "png/medium/roi-coeur.png",
+          "content_box": {
+            "x": 35,
+            "y": 29,
+            "width": 393,
+            "height": 753
+          },
+          "base64_length": 716896
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 147823,
+          "file": "png/low/roi-coeur.png",
+          "content_box": {
+            "x": 17,
+            "y": 14,
+            "width": 197,
+            "height": 377
+          },
+          "base64_length": 197100
+        }
+      }
+    },
+    {
+      "id": "JD",
+      "slug": "valet-carreau",
+      "name": "Valet de Carreau",
+      "name_en": "Jack of Diamonds",
+      "rank": {
+        "code": "J",
+        "name": "Valet",
+        "name_en": "Jack"
+      },
+      "suit": {
+        "code": "D",
+        "name": "Carreau",
+        "name_en": "Diamonds",
+        "symbol": "♦",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-JD",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/valet-carreau.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1635464,
+          "file": "png/extra_high/valet-carreau.png",
+          "content_box": {
+            "x": 82,
+            "y": 33,
+            "width": 739,
+            "height": 1453
+          },
+          "base64_length": 2180620
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 991996,
+          "file": "png/high/valet-carreau.png",
+          "content_box": {
+            "x": 61,
+            "y": 24,
+            "width": 555,
+            "height": 1091
+          },
+          "base64_length": 1322664
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 481637,
+          "file": "png/medium/valet-carreau.png",
+          "content_box": {
+            "x": 40,
+            "y": 16,
+            "width": 371,
+            "height": 728
+          },
+          "base64_length": 642184
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 138044,
+          "file": "png/low/valet-carreau.png",
+          "content_box": {
+            "x": 20,
+            "y": 8,
+            "width": 186,
+            "height": 364
+          },
+          "base64_length": 184060
+        }
+      }
+    },
+    {
+      "id": "QD",
+      "slug": "dame-carreau",
+      "name": "Dame de Carreau",
+      "name_en": "Queen of Diamonds",
+      "rank": {
+        "code": "Q",
+        "name": "Dame",
+        "name_en": "Queen"
+      },
+      "suit": {
+        "code": "D",
+        "name": "Carreau",
+        "name_en": "Diamonds",
+        "symbol": "♦",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-QD",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/dame-carreau.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1975083,
+          "file": "png/extra_high/dame-carreau.png",
+          "content_box": {
+            "x": 82,
+            "y": 39,
+            "width": 741,
+            "height": 1437
+          },
+          "base64_length": 2633444
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1192475,
+          "file": "png/high/dame-carreau.png",
+          "content_box": {
+            "x": 61,
+            "y": 29,
+            "width": 557,
+            "height": 1079
+          },
+          "base64_length": 1589968
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 568154,
+          "file": "png/medium/dame-carreau.png",
+          "content_box": {
+            "x": 40,
+            "y": 19,
+            "width": 372,
+            "height": 720
+          },
+          "base64_length": 757540
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 152508,
+          "file": "png/low/dame-carreau.png",
+          "content_box": {
+            "x": 20,
+            "y": 9,
+            "width": 186,
+            "height": 361
+          },
+          "base64_length": 203344
+        }
+      }
+    },
+    {
+      "id": "KD",
+      "slug": "roi-carreau",
+      "name": "Roi de Carreau",
+      "name_en": "King of Diamonds",
+      "rank": {
+        "code": "K",
+        "name": "Roi",
+        "name_en": "King"
+      },
+      "suit": {
+        "code": "D",
+        "name": "Carreau",
+        "name_en": "Diamonds",
+        "symbol": "♦",
+        "color": "rouge"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-KD",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/roi-carreau.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1811565,
+          "file": "png/extra_high/roi-carreau.png",
+          "content_box": {
+            "x": 82,
+            "y": 92,
+            "width": 741,
+            "height": 1469
+          },
+          "base64_length": 2415420
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1101195,
+          "file": "png/high/roi-carreau.png",
+          "content_box": {
+            "x": 61,
+            "y": 69,
+            "width": 557,
+            "height": 1102
+          },
+          "base64_length": 1468260
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 531737,
+          "file": "png/medium/roi-carreau.png",
+          "content_box": {
+            "x": 40,
+            "y": 46,
+            "width": 372,
+            "height": 735
+          },
+          "base64_length": 708984
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 147432,
+          "file": "png/low/roi-carreau.png",
+          "content_box": {
+            "x": 20,
+            "y": 23,
+            "width": 186,
+            "height": 368
+          },
+          "base64_length": 196576
+        }
+      }
+    },
+    {
+      "id": "JC",
+      "slug": "valet-trefle",
+      "name": "Valet de Trèfle",
+      "name_en": "Jack of Clubs",
+      "rank": {
+        "code": "J",
+        "name": "Valet",
+        "name_en": "Jack"
+      },
+      "suit": {
+        "code": "C",
+        "name": "Trèfle",
+        "name_en": "Clubs",
+        "symbol": "♣",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-JC",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/valet-trefle.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1535131,
+          "file": "png/extra_high/valet-trefle.png",
+          "content_box": {
+            "x": 86,
+            "y": 23,
+            "width": 735,
+            "height": 1463
+          },
+          "base64_length": 2046844
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 926688,
+          "file": "png/high/valet-trefle.png",
+          "content_box": {
+            "x": 65,
+            "y": 17,
+            "width": 551,
+            "height": 1098
+          },
+          "base64_length": 1235584
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 447325,
+          "file": "png/medium/valet-trefle.png",
+          "content_box": {
+            "x": 43,
+            "y": 11,
+            "width": 368,
+            "height": 733
+          },
+          "base64_length": 596436
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 124719,
+          "file": "png/low/valet-trefle.png",
+          "content_box": {
+            "x": 21,
+            "y": 6,
+            "width": 185,
+            "height": 366
+          },
+          "base64_length": 166292
+        }
+      }
+    },
+    {
+      "id": "QC",
+      "slug": "dame-trefle",
+      "name": "Dame de Trèfle",
+      "name_en": "Queen of Clubs",
+      "rank": {
+        "code": "Q",
+        "name": "Dame",
+        "name_en": "Queen"
+      },
+      "suit": {
+        "code": "C",
+        "name": "Trèfle",
+        "name_en": "Clubs",
+        "symbol": "♣",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-QC",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/dame-trefle.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1954584,
+          "file": "png/extra_high/dame-trefle.png",
+          "content_box": {
+            "x": 78,
+            "y": 50,
+            "width": 745,
+            "height": 1430
+          },
+          "base64_length": 2606112
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1184308,
+          "file": "png/high/dame-trefle.png",
+          "content_box": {
+            "x": 58,
+            "y": 37,
+            "width": 560,
+            "height": 1074
+          },
+          "base64_length": 1579080
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 564861,
+          "file": "png/medium/dame-trefle.png",
+          "content_box": {
+            "x": 38,
+            "y": 24,
+            "width": 374,
+            "height": 717
+          },
+          "base64_length": 753148
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 152184,
+          "file": "png/low/dame-trefle.png",
+          "content_box": {
+            "x": 19,
+            "y": 12,
+            "width": 187,
+            "height": 359
+          },
+          "base64_length": 202912
+        }
+      }
+    },
+    {
+      "id": "KC",
+      "slug": "roi-trefle",
+      "name": "Roi de Trèfle",
+      "name_en": "King of Clubs",
+      "rank": {
+        "code": "K",
+        "name": "Roi",
+        "name_en": "King"
+      },
+      "suit": {
+        "code": "C",
+        "name": "Trèfle",
+        "name_en": "Clubs",
+        "symbol": "♣",
+        "color": "noir"
+      },
+      "mime": "image/png",
+      "background": "transparent",
+      "data_uri_prefix": "data:image/png;base64,",
+      "source": {
+        "svg_element": "card-KC",
+        "width": 448,
+        "height": 800
+      },
+      "json": "json/roi-trefle.json",
+      "qualities": {
+        "extra_high": {
+          "label": "Extra haute",
+          "scale": 2.0,
+          "width": 896,
+          "height": 1600,
+          "bytes": 1769399,
+          "file": "png/extra_high/roi-trefle.png",
+          "content_box": {
+            "x": 78,
+            "y": 66,
+            "width": 745,
+            "height": 1491
+          },
+          "base64_length": 2359200
+        },
+        "high": {
+          "label": "Haute",
+          "scale": 1.5,
+          "width": 672,
+          "height": 1200,
+          "bytes": 1076388,
+          "file": "png/high/roi-trefle.png",
+          "content_box": {
+            "x": 58,
+            "y": 50,
+            "width": 560,
+            "height": 1117
+          },
+          "base64_length": 1435184
+        },
+        "medium": {
+          "label": "Moyenne",
+          "scale": 1.0,
+          "width": 448,
+          "height": 800,
+          "bytes": 518278,
+          "file": "png/medium/roi-trefle.png",
+          "content_box": {
+            "x": 38,
+            "y": 33,
+            "width": 374,
+            "height": 745
+          },
+          "base64_length": 691040
+        },
+        "low": {
+          "label": "Basse",
+          "scale": 0.5,
+          "width": 224,
+          "height": 400,
+          "bytes": 141312,
+          "file": "png/low/roi-trefle.png",
+          "content_box": {
+            "x": 19,
+            "y": 16,
+            "width": 187,
+            "height": 373
+          },
+          "base64_length": 188416
+        }
+      }
+    }
+  ]
+}
